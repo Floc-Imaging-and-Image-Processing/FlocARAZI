@@ -1,0 +1,36 @@
+// IJ.freeMemory() ;
+//dir=getDirectory("");
+//dir="/james/strom/Test_run/"
+//list= getFileList(dir);
+setBatchMode(true);
+run("Set Measurements...", "area min perimeter bounding fit shape redirect=None decimal=4");
+//dir1="/home/akeyvani/Non-interactive/"
+dir1=getDirectory("startup");
+list1= getFileList(dir1);
+for (i=0; i<list1.length; i++) {
+   dirmain=dir1+list1[i];
+   dir2=substring(dirmain,0,lengthOf(dirmain)-1)+"/" ;
+   list2= getFileList(dir2);
+   for (j=0; j<list2.length; j++) {
+      open(dir2+list2[j]);
+      path=dir2+list2[j];
+      run("Subtract Background...", "rolling=60 light sliding");
+      dotIndex = lastIndexOf(path, ".");
+      path = substring(path, 0, dotIndex); // remove extension
+      saveAs("Jpeg", path+".jpg");
+      setAutoThreshold("Triangle");
+      run("Make Binary");
+      run("Erode");
+      //run("Erode");
+      //run("Convert to Mask");
+      //run("Close-");
+      //run("Watershed");
+      run("Analyze Particles...", "size=5-Infinity circularity=0.00-1.00 show=Outlines display clear include record");
+      saveAs("Measurements", path+".txt");
+      run("Save", "save=["+path+".tif]");
+      run("Close");
+      run("Close");
+   }
+}
+//}
+
